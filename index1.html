@@ -75,10 +75,10 @@
         }
 
         .message-bubble {
-            max-width: 85%;
+            max-width: 75%;
             word-wrap: break-word;
             animation: fadeIn 0.3s ease-out;
-            line-height: 1.35;
+            line-height: 1.25;
             position: relative;
         }
 
@@ -87,7 +87,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Modal Styles */
+        /* Modal mb-4Styles */
         #config-modal {
             background: rgba(91, 112, 131, 0.4);
             backdrop-filter: blur(5px);
@@ -121,19 +121,19 @@
                     <h3 class="text-[#71767b] font-bold text-sm uppercase">Event Details</h3>
                     <div class="grid grid-cols-2 gap-3">
                         <div class="col-span-2">
-                            <label class="block text-xs text-[#71767b] mb-1">Event Name</label>
+                            <label class="block text-xs text-[#71767b] mb-4">Event Name</label>
                             <input type="text" id="inp-event-name" value="IV OF SPADES LIVE AT THE MOA ARENA" class="w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs text-[#71767b] mb-1">Date</label>
+                            <label class="block text-xs text-[#71767b] mb-4">Date</label>
                             <input type="text" id="inp-event-date" value="Dec 13" class="w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs text-[#71767b] mb-1">Year</label>
+                            <label class="block text-xs text-[#71767b] mb-4">Year</label>
                             <input type="text" id="inp-event-year" value="2025" class="w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none">
                         </div>
                         <div class="col-span-2">
-                            <label class="block text-xs text-[#71767b] mb-1">Meetup Venue (Short Name)</label>
+                            <label class="block text-xs text-[#71767b] mb-4">Meetup Venue (Short Name)</label>
                             <input type="text" id="inp-meetup" value="MOA" class="w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none" placeholder="e.g. MOA, Araneta, PH Arena">
                         </div>
                     </div>
@@ -144,15 +144,15 @@
                     <h3 class="text-[#71767b] font-bold text-sm uppercase">Seller & Proof</h3>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs text-[#71767b] mb-1">Display Name</label>
+                            <label class="block text-xs text-[#71767b] mb-4">Display Name</label>
                             <input type="text" id="inp-seller-name" value="LIANA_FAYE_KPOPIE" class="w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs text-[#71767b] mb-1">Handle (@)</label>
+                            <label class="block text-xs text-[#71767b] mb-4">Handle (@)</label>
                             <input type="text" id="inp-seller-handle" value="@LianaLlorente" class="w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none">
                         </div>
                         <div class="col-span-2">
-                            <label class="block text-xs text-[#71767b] mb-1">Proof of Life Image</label>
+                            <label class="block text-xs text-[#71767b] mb-4">Proof of Life Image</label>
                             <div class="flex items-center gap-2">
                                 <label for="inp-ticket-image" class="cursor-pointer bg-[#eff3f4] hover:bg-[#d9d9d9] text-black font-bold text-sm py-2 px-4 rounded-full flex items-center gap-2 transition">
                                     <i class="fas fa-camera"></i> Upload
@@ -220,7 +220,7 @@
 
         <!-- ACTION MENU OVERLAY (Action Sheet Style) -->
         <div id="action-menu" class="absolute inset-0 bg-black/50 z-50 hidden flex-col justify-end p-4 backdrop-blur-sm transition-opacity" style="animation: fadeIn 0.2s;">
-            <div class="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-2xl space-y-[1px] mb-3 safe-area-bottom">
+            <div class="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-2xl space-y-[1px] mb-4 safe-area-bottom">
                 <button onclick="handleThemeToggle()" class="w-full p-4 text-[var(--text-primary)] bg-[var(--bg-primary)] hover:bg-[var(--input-bg)] text-center text-[17px] font-normal transition-colors border-b border-[var(--border-color)]">
                     Switch Theme (Light/Dark)
                 </button>
@@ -231,7 +231,7 @@
                     Install App <i class="fas fa-download ml-2"></i>
                 </button>
             </div>
-            <button onclick="toggleMenu()" class="w-full p-4 text-[var(--text-primary)] bg-[var(--bg-primary)] border border-[var(--border-color)] hover:bg-[var(--input-bg)] rounded-2xl text-center text-[17px] font-bold transition-colors shadow-lg mb-[env(safe-area-inset-bottom)]">
+            <button onclick="toggleMenu()" class="w-full p-4 text-[var(--text-primary)] bg-[var(--bg-primary)] border border-[var(--border-color)] hover:bg-[var(--input-bg)] rounded-2xl text-center text-[17px] font-bold transition-colors shadow-lg mb-4env(safe-area-inset-bottom)]">
                 Cancel
             </button>
         </div>
@@ -794,11 +794,11 @@
             const heroDiv = document.createElement('div');
             heroDiv.className = "flex flex-col items-center pt-8 pb-8 border-b border-[var(--border-color)] mb-4 transition-colors duration-200";
             heroDiv.innerHTML = `
-                <div class="relative mb-2">
+                <div class="relative mb-4">
                     <img src="${avatarUrl}" class="w-16 h-16 rounded-full object-cover bg-gray-800">
                 </div>
                 <h2 class="text-[var(--text-primary)] font-bold text-lg leading-tight">${data.buyerName}</h2>
-                <div class="text-[var(--text-secondary)] text-[15px] mb-2">${data.buyerHandle}</div>
+                <div class="text-[var(--text-secondary)] text-[15px] mb-4">${data.buyerHandle}</div>
                 <div class="text-[var(--text-secondary)] text-[15px] flex items-center gap-1">
                     <i class="far fa-calendar-alt"></i>
                     <span>Joined April 2024</span>
@@ -825,7 +825,7 @@
                 const wrapper = document.createElement('div');
                 const isSender = msg.type === 'tx'; 
                 const align = isSender ? 'items-end' : 'items-start';
-                wrapper.className = `flex flex-col gap-[2px] ${align} mb-1`;
+                wrapper.className = `flex flex-col gap-[2px] ${align} mb-4`;
                 
                 let contentHTML = '';
                 
@@ -842,7 +842,7 @@
                     const imgSrc = customTicketImage ? customTicketImage : null;
                     // Image Bubble structure
                     contentHTML = `
-                        <div class="relative overflow-hidden rounded-[18px] border border-[var(--border-color)] mb-1">
+                        <div class="relative overflow-hidden rounded-[18px] border border-[var(--border-color)] mb-4">
                              ${imgSrc 
                                 ? `<img src="${imgSrc}" class="max-w-[260px] max-h-[300px] object-cover block">`
                                 : `<div class="bg-[var(--img-placeholder-bg)] w-[260px] h-[180px] flex items-center justify-center">
@@ -861,7 +861,7 @@
                     // Text accompanying image (if any)
                     if(msg.text && msg.text !== "Here oh.") {
                          contentHTML += `
-                            <div class="message-bubble ${bgClass} ${textClass} px-4 py-2.5 ${shapeClass} text-[15px] max-w-[85%] inline-block transition-colors duration-200">
+                            <div class="message-bubble ${bgClass} ${textClass} px-2 py-2.5 ${shapeClass} text-[15px] max-w-[85%] inline-block transition-colors duration-200 mb-4">
                                 <span class="align-middle">${msg.text}</span>
                                 <span class="inline-block text-[11px] ${isSender ? 'text-blue-100' : 'text-gray-400'} ml-2 align-bottom mb-0.5">
                                     ${timeStr} ${isSender ? '<i class="fas fa-check-circle text-[10px]"></i>' : ''}
@@ -872,13 +872,13 @@
                 } else {
                     let text = msg.text.replace(/\n/g, '<br>');
                     if(text.includes('TXJ8')) {
-                        text = text.replace(/(TXJ8[a-zA-Z0-9]+)/g, '<span class="font-mono text-sm bg-black/20 p-1 rounded select-all cursor-pointer">$1</span>');
+                        text = text.replace(/(TXJ8[a-zA-Z0-9]+)/g, '<!span class="font-mono text-sm p-1 rounded select-all cursor-pointer">$1</span>');
                     }
                     
                     contentHTML = `
-                        <div class="message-bubble ${bgClass} ${textClass} px-4 py-2.5 ${shapeClass} text-[15px] inline-block transition-colors duration-200">
+                        <div class="message-bubble ${bgClass} ${textClass} px-4 py-2.5 ${shapeClass} text-[15px] inline-block transition-colors duration-200 mb-4">
                             <span class="align-middle">${text}</span>
-                            <span class="inline-block text-[11px] ${isSender ? 'text-blue-100' : 'text-gray-400'} ml-2 align-bottom mb-0.5 whitespace-nowrap">
+                            <span class="inline-block text-[11px] ${isSender ? 'text-blue-100' : 'text-gray-400'} ml-2 align-bottom mb-4.5 whitespace-nowrap">
                                 ${timeStr} ${isSender ? '<i class="fas fa-check-circle text-[10px] ml-0.5"></i>' : ''}
                             </span>
                         </div>
