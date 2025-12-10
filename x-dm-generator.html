@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- PWA Settings -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="X DM Gen">
+    <meta name="theme-color" content="#000000">
+    <link id="manifest-placeholder" rel="manifest">
+    <link rel="apple-touch-icon" href="https://abs.twimg.com/responsive-web/client-web/icon-ios.b1fc727a.png">
+
+    <title>X DM Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        html {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        
+        body {
+            /* Default to black on mobile to match app bg, gray on desktop */
+            background-color: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden; /* Prevent body scroll */
+        }
+        
+        @media (min-width: 640px) {
+            body {
+                background-color: #111827; /* gray-900 */
+            }
+        }
+
+        /* THEME VARIABLES */
+        .theme-wrapper {
+            --bg-primary: #000000;
+            --bg-header: rgba(0, 0, 0, 0.8);
+            --border-color: #2f3336;
+            --text-primary: #e7e9ea;
+            --text-secondary: #71767b;
+            --rx-bubble: #2f3336;
+            --rx-text: #e7e9ea;
+            --input-bg: #202327;
+            --plus-btn-bg: #eff3f4;
+            --plus-btn-text: #000000;
+            --icon-color: #eff3f4;
+            --placeholder-color: #71767b;
+            --img-placeholder-bg: #16181c;
+        }
+
+        .theme-wrapper[data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-header: rgba(255, 255, 255, 0.95);
+            --border-color: #eff3f4; /* Light gray border */
+            --text-primary: #0f1419; /* Almost black */
+            --text-secondary: #536471; /* Dark gray */
+            --rx-bubble: #eff3f4; /* Light gray bubble */
+            --rx-text: #0f1419;
+            --input-bg: #eff3f4;
+            --plus-btn-bg: #1d9bf0; /* Blue plus button in light mode usually, or keep black? Let's go blue for brand */
+            --plus-btn-text: #ffffff;
+            --icon-color: #0f1419;
+            --placeholder-color: #536471;
+            --img-placeholder-bg: #f7f9f9;
+        }
+
+        .message-bubble {
+            max-width: 85%;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease-out;
+            line-height: 1.35;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Modal Styles */
+        #config-modal {
+            background: rgba(91, 112, 131, 0.4);
+            backdrop-filter: blur(5px);
+        }
+        
+        /* Dynamic Placeholder color */
+        ::placeholder {
+            color: var(--placeholder-color);
+            opacity: 1;
+        }
+        
+        /* Safe area for iPhone X+ */
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+</head>
+<body id="main-body" class="flex justify-center items-center min-h-screen transition-colors duration-200">
+
+    <!-- CONFIGURATION MODAL (Kept exactly as requested) -->
+    <div id="config-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="bg-black border border-[#2f3336] w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-[#2f3336] flex justify-between items-center">
+                <h2 class="text-xl font-bold text-[#e7e9ea]">Setup Conversation</h2>
+                <button onclick="document.getElementById('config-modal').style.display='none'" class="text-[#1d9bf0]">Cancel</button>
+            </div>
+            
+            <div class="p-4 overflow-y-auto space-y-4">
+                <!-- Event Details -->
+                <div class="space-y-3">
+                    <h3 class="text-[#71767b] font-bold text-sm uppercase">Event Details</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="col-span-2">
+                            <label class="block text-xs text-[#71767b] mb-1">Event Name</label>
+                            <input type="text" id="inp-event-name" value="IV OF SPADES LIVE AT THE MOA ARENA" class="w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-[#71767b] mb-1">Date</label>
+                            <input type="text" id="inp-event-date" value="Dec 13" class="w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-[#71767b] mb-1">Year</label>
+                            <input type="text" id="inp-event-year" value="2025" class="w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs text-[#71767b] mb-1">Meetup Venue (Short Name)</label>
+                            <input type="text" id="inp-meetup" value="MOA" class="w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none" placeholder="e.g. MOA, Araneta, PH Arena">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seller & Proof -->
+                <div class="space-y-3 pt-2 border-t border-[#2f3336]">
+                    <h3 class="text-[#71767b] font-bold text-sm uppercase">Seller & Proof</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-[#71767b] mb-1">Display Name</label>
+                            <input type="text" id="inp-seller-name" value="LIANA_FAYE_KPOPIE" class="w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-[#71767b] mb-1">Handle (@)</label>
+                            <input type="text" id="inp-seller-handle" value="@LianaLlorente" class="w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs text-[#71767b] mb-1">Proof of Life Image</label>
+                            <div class="flex items-center gap-2">
+                                <label for="inp-ticket-image" class="cursor-pointer bg-[#eff3f4] hover:bg-[#d9d9d9] text-black font-bold text-sm py-2 px-4 rounded-full flex items-center gap-2 transition">
+                                    <i class="fas fa-camera"></i> Upload
+                                </label>
+                                <input type="file" id="inp-ticket-image" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
+                                <span id="file-name-display" class="text-sm text-[#71767b] truncate">No file chosen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tickets -->
+                <div class="space-y-3 pt-2 border-t border-[#2f3336]">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-[#71767b] font-bold text-sm uppercase">Ticket Types</h3>
+                        <button onclick="addTicketRow()" class="text-xs text-[#1d9bf0] hover:underline font-bold">+ Add Ticket</button>
+                    </div>
+                    <div id="ticket-container" class="space-y-2">
+                        <!-- Rows injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-[#2f3336] bg-black rounded-b-2xl">
+                <button onclick="saveAndStart()" class="w-full bg-[#eff3f4] hover:bg-[#d9d9d9] text-black font-bold py-3 rounded-full transition">
+                    Generate
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile View Container -->
+    <!-- Updated RESPONSIVE Structure: 
+         - Mobile: Full width (w-full), Full height (h-[100dvh]), No border, No radius
+         - Tablet/Desktop (sm): Fixed width (max-w-md), Fixed height (h-[95vh]), Border, Radius
+    -->
+    <div id="mobile-container" class="theme-wrapper flex flex-col overflow-hidden relative shadow-none transition-colors duration-200 w-full h-[100dvh] border-none rounded-none sm:w-full sm:max-w-md sm:h-[95vh] sm:border-[8px] sm:border-[#16181c] sm:rounded-[30px] sm:shadow-2xl" data-theme="dark">
+        
+        <!-- Header -->
+        <div class="flex items-center gap-1 px-2 py-2 border-b border-[var(--border-color)] bg-[var(--bg-header)] backdrop-blur-md sticky top-0 z-10 h-[56px] transition-colors duration-200 pt-[calc(8px+env(safe-area-inset-top))] sm:pt-2">
+            <!-- Back Arrow -->
+            <button class="text-[var(--text-primary)] p-2" onclick="showConfig()">
+                <i class="fas fa-arrow-left text-lg"></i>
+            </button>
+            
+            <!-- Avatar (Small header) -->
+            <div class="ml-1 mr-3 relative">
+                 <img id="header-avatar" src="" alt="Profile" class="w-[30px] h-[30px] rounded-full bg-gray-800 object-cover">
+            </div>
+
+            <!-- Name and Status -->
+            <div class="flex flex-col flex-1 justify-center">
+                <span id="header-name" class="font-bold text-[17px] leading-tight text-[var(--text-primary)] overflow-hidden text-ellipsis whitespace-nowrap"></span>
+                <div class="flex items-center gap-1 text-[var(--text-secondary)] text-[13px] leading-tight">
+                    <i class="fas fa-lock text-[10px]"></i>
+                    <span>Unencrypted</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="flex-1 overflow-y-auto px-4 py-2 space-y-1" id="chat-container">
+            <!-- Content will be injected here by JS -->
+        </div>
+
+        <!-- ACTION MENU OVERLAY (Action Sheet Style) -->
+        <div id="action-menu" class="absolute inset-0 bg-black/50 z-50 hidden flex-col justify-end p-4 backdrop-blur-sm transition-opacity" style="animation: fadeIn 0.2s;">
+            <div class="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-2xl space-y-[1px] mb-3 safe-area-bottom">
+                <button onclick="handleThemeToggle()" class="w-full p-4 text-[var(--text-primary)] bg-[var(--bg-primary)] hover:bg-[var(--input-bg)] text-center text-[17px] font-normal transition-colors border-b border-[var(--border-color)]">
+                    Switch Theme (Light/Dark)
+                </button>
+                <button onclick="handleGenerate()" class="w-full p-4 text-[#1d9bf0] bg-[var(--bg-primary)] hover:bg-[var(--input-bg)] text-center text-[17px] font-bold transition-colors border-b border-[var(--border-color)]">
+                    Generate New Scenario
+                </button>
+                <button id="install-btn" onclick="handleInstall()" class="w-full p-4 text-[#00ba7c] bg-[var(--bg-primary)] hover:bg-[var(--input-bg)] text-center text-[17px] font-bold transition-colors hidden">
+                    Install App <i class="fas fa-download ml-2"></i>
+                </button>
+            </div>
+            <button onclick="toggleMenu()" class="w-full p-4 text-[var(--text-primary)] bg-[var(--bg-primary)] border border-[var(--border-color)] hover:bg-[var(--input-bg)] rounded-2xl text-center text-[17px] font-bold transition-colors shadow-lg mb-[env(safe-area-inset-bottom)]">
+                Cancel
+            </button>
+        </div>
+
+        <!-- Input Area -->
+        <div class="bg-[var(--bg-primary)] px-3 py-3 flex items-center gap-3 min-h-[50px] transition-colors duration-200 relative z-20 safe-area-bottom">
+            <!-- Plus Circle Button with Action Menu Trigger -->
+            <button onclick="toggleMenu()" class="w-[34px] h-[34px] bg-[var(--plus-btn-bg)] text-[var(--plus-btn-text)] rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-200 hover:opacity-90 active:scale-95" title="More Options">
+                <i class="fas fa-plus text-[16px]"></i>
+            </button>
+            
+            <!-- Input Pill -->
+            <div class="flex-1 bg-[var(--input-bg)] rounded-[24px] h-[44px] flex items-center px-4 gap-2 border border-transparent focus-within:border-[#1d9bf0] transition-colors duration-200">
+                <input type="text" placeholder="Unencrypted Message" class="bg-transparent text-[var(--text-primary)] w-full outline-none text-[16px]">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- LOGIC -->
+    <script>
+        // --- PWA INSTALL LOGIC ---
+        let deferredPrompt;
+        
+        // 1. Generate Manifest Dynamically
+        const manifest = {
+            "name": "X DM Generator",
+            "short_name": "X DM",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#000000",
+            "theme_color": "#000000",
+            "icons": [{
+                "src": "https://abs.twimg.com/responsive-web/client-web/icon-ios.b1fc727a.png",
+                "sizes": "192x192",
+                "type": "image/png"
+            }]
+        };
+        const stringManifest = JSON.stringify(manifest);
+        const blob = new Blob([stringManifest], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(blob);
+        document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
+
+        // 2. Capture Install Prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('install-btn');
+            btn.classList.remove('hidden'); // Show button if installable
+        });
+
+        // 3. Handle Install Click
+        function handleInstall() {
+            // Android / Desktop Chrome
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('install-btn').classList.add('hidden');
+                });
+                toggleMenu();
+            } else {
+                // iOS Fallback or if prompt not available
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIOS) {
+                    alert("To install on iOS:\n1. Tap the Share button (box with arrow)\n2. Scroll down and tap 'Add to Home Screen'");
+                } else {
+                    alert("App installation not supported directly. Please use your browser menu to 'Add to Home Screen'.");
+                }
+                toggleMenu();
+            }
+        }
+    
+        // --- GLOBAL SETTINGS (Populated by UI) ---
+        let EVENT = {
+            name: "",
+            date: "",
+            year: "",
+            venue: "",
+        };
+
+        let TICKETS = [];
+        let SELLER = {
+            name: "",
+            handle: ""
+        };
+        
+        let customTicketImage = null; // Store base64 image
+
+        // Default Data for Initial Load
+        const DEFAULT_TICKETS = [
+            { label: "Floor Standing", price: "₱4,500" },
+            { label: "LB Premium", price: "₱6,500" },
+            { label: "LB Regular", price: "₱5,500" }
+        ];
+
+        // --- SETUP UI LOGIC ---
+        function toggleMenu() {
+            const menu = document.getElementById('action-menu');
+            if (menu.style.display === 'flex') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'flex';
+            }
+        }
+
+        function handleThemeToggle() {
+            toggleTheme();
+            toggleMenu();
+        }
+
+        function handleGenerate() {
+            generateNewConversation();
+            toggleMenu();
+        }
+
+        function toggleTheme() {
+            const container = document.getElementById('mobile-container');
+            const currentTheme = container.getAttribute('data-theme');
+            const isNowLight = currentTheme === 'dark'; // Switching TO light
+
+            container.setAttribute('data-theme', isNowLight ? 'light' : 'dark');
+            
+            // Update meta theme-color for PWA status bar
+            const metaThemeColor = document.querySelector("meta[name=theme-color]");
+            
+            if(isNowLight) {
+                // LIGHT MODE
+                metaThemeColor.setAttribute("content", "#ffffff");
+                // Update body background to white to match mobile app background (fixes overscroll/safe-area black bars)
+                document.body.style.backgroundColor = "#ffffff";
+            } else {
+                // DARK MODE
+                metaThemeColor.setAttribute("content", "#000000");
+                // Remove inline style to let CSS take over (Black on mobile, Gray-900 on desktop)
+                document.body.style.backgroundColor = ""; 
+            }
+        }
+
+        function initUI() {
+            const container = document.getElementById('ticket-container');
+            container.innerHTML = '';
+            DEFAULT_TICKETS.forEach(t => addTicketRow(t.label, t.price));
+        }
+
+        function addTicketRow(label = "", price = "") {
+            const container = document.getElementById('ticket-container');
+            const div = document.createElement('div');
+            div.className = "grid grid-cols-2 gap-3 ticket-row";
+            div.innerHTML = `
+                <input type="text" placeholder="Section" value="${label}" class="t-label w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none">
+                <div class="flex gap-2">
+                    <input type="text" placeholder="Price" value="${price}" class="t-price w-full bg-black border border-[#2f3336] rounded p-2 text-sm text-[#e7e9ea] focus:border-[#1d9bf0] outline-none">
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-[#f4212e] hover:text-red-400"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function handleImageUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                document.getElementById('file-name-display').innerText = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    customTicketImage = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function showConfig() {
+            document.getElementById('config-modal').style.display = 'flex';
+        }
+
+        function saveAndStart() {
+            EVENT.name = document.getElementById('inp-event-name').value;
+            EVENT.date = document.getElementById('inp-event-date').value;
+            EVENT.year = document.getElementById('inp-event-year').value;
+            EVENT.venue = document.getElementById('inp-meetup').value; 
+
+            SELLER.name = document.getElementById('inp-seller-name').value;
+            SELLER.handle = document.getElementById('inp-seller-handle').value;
+
+            TICKETS = [];
+            document.querySelectorAll('.ticket-row').forEach(row => {
+                const label = row.querySelector('.t-label').value;
+                const price = row.querySelector('.t-price').value;
+                if(label && price) TICKETS.push({ label, price });
+            });
+
+            if(TICKETS.length === 0) {
+                alert("Please add at least one ticket type.");
+                return;
+            }
+
+            document.getElementById('config-modal').style.display = 'none';
+            generateNewConversation();
+        }
+
+        // --- CONSTANTS ---
+        const BUYER_NAMES = [
+            "Aria", "Josh", "Mika", "Renz", "Gab", "Bea", "Ken", "Pat", "Ysa", "Kian", 
+            "Louie", "Sam", "Alex", "Cheska", "Jolo", "Ria", "Nico", "Pam", "Gio", "Ella",
+            "Xander", "Bella", "Miguel", "Sofia", "Luis", "Chloe", "Marco", "Hannah"
+        ];
+
+        const PERSONAS = [
+            { id: 'polite', label: 'The Polite Student', style: 'proper_polite' },
+            { id: 'conyo', label: 'The Conyo Kid', style: 'conyo' },
+            { id: 'jejemon', label: 'The Jejemon', style: 'jeje' },
+            { id: 'panic', label: 'The Panic Buyer', style: 'frantic' },
+            { id: 'skeptic', label: 'The Skeptic', style: 'suspicious' },
+            { id: 'lowkey', label: 'The Lowkey', style: 'lowercase_chill' }
+        ];
+
+        // --- DIALOGUE BANKS ---
+        const DIALOGUE = {
+            openers: [
+                "Hi! 👋 Saw your tweet regarding the {ticket} tix.",
+                "Hello po! Is the {ticket} still available?",
+                "Excuse me, regarding the ticket?",
+                "Hi there, interested in the {ticket}.",
+                "Hello, ask ko lang if avail pa yung ticket?",
+                "Hey! WTS post?",
+                "Good pm! May I know if the {ticket} is still unsold?",
+                "Hi po, naghahanap pa kayo buyer for {ticket}?",
+                "Hello! Get ko na sana yung {ticket}.",
+                "Hi! Available pa?",
+                "Pm sent regarding {ticket}!",
+                "Avail?",
+                "Hello, I dm'd you about the tix.",
+                "Hm for the {ticket}?"
+            ],
+            avail_confirms: [
+                "Hello! Yes avail pa :) Price is {price} each.",
+                "Hi! Slr. Yes available pa siya. Selling it for {price}.",
+                "Uy hello! Yes unsold pa. Get mo? It's {price}.",
+                "Hi there! Yes available pa. {price} po per tix.",
+                "Hello! Yes, last slot for {ticket}. {price} po."
+            ],
+            haggle_attempts: [
+                "Last price na po ba yung {price}?",
+                "Wala na po bawas sa {price}?",
+                "Pwede po ba discounted nalang?",
+                "Discounted na ba to or negotiable pa?",
+                "Baka pwede less 500? Student lang po kasi.",
+                "Can you do a slight discount? Sayang din kasi fees."
+            ],
+            haggle_rejects: [
+                "Naku sorry fixed price na eh.",
+                "Pass po muna sa tawad, same price ko lang din nakuha.",
+                "Sorry last price na yan.",
+                "Fixed price po sorry. Dami din nag iinquire eh."
+            ],
+            seat_queries: [
+                "May I see the seat view?",
+                "Kita ba yung stage diyan?",
+                "May pic po kayo nung view from that section?",
+                "Is the view unobstructed?",
+                "San banda to sa seat plan?"
+            ],
+            seat_replies: [
+                "Wait send ko sayo reference view.",
+                "Maganda view niyan, unobstructed. Here oh.",
+                "Ito yung view from that section.",
+                "Sending seat layout..."
+            ],
+            reasons_dp: [
+                "waiting on my paycheck this Friday",
+                "allowance hasn't come in yet",
+                "waiting for my friend to send her share",
+                "maxed out my transfer limit for today",
+                "short on funds til next week",
+                "salary is delayed :(",
+                "need to withdraw cash pa",
+                "nasa work pa kasi ako now",
+                "weekend pa kasi pasok ng pera ko"
+            ],
+            reservation_asks: [
+                "Pwede ba 50% DP muna for reservation? I'm just {reason}.",
+                "Can I reserve it with a downpayment? {reason} eh.",
+                "Is it okay if I pay half now to secure it? {reason}.",
+                "Pwede pa-hold? I can send 50% now. {reason}.",
+                "Accepting reservation DP? {reason} kasi.",
+                "If I DP 50% now, can you hold it til {meetup}?"
+            ],
+            meetup_asks: [
+                "Meetup around {meetup} is ok?",
+                "Preferred meetup sa {meetup}?",
+                "{meetup} meetup right?",
+                "Pwede meetup sa venue?",
+                "Can we meet at {meetup}?",
+                "Meetup ok?"
+            ],
+            crypto_excuses: [
+                "Btw, accept ko lang payment via USDT/Crypto ah? Nasa abroad kasi ako now so di ako makareceive sa banks.",
+                "Note lang po: Payment via Crypto (USDT) only. Max limit na kasi GCash ko for this month.",
+                "Strictly crypto payment po prefer ko for safety.",
+                "Just heads up, I only accept USDT. Wala ako local banks eh.",
+                "Payment is via USDT/Crypto only. Hope that's ok."
+            ],
+            crypto_reactions: [
+                "Hala crypto? 😯 Wala po kayong GCash?",
+                "Ay weh crypto? Wala bang bank transfer?",
+                "Crypto? Shocks di ako marunong niyan eh.",
+                "Luh ang hassle naman. No GCash?",
+                "Ay wala ako nun. Di pwede bank transfer?",
+                "Omg I don't have crypto wallets.",
+                "Hala pano yun? GCash lang meron ako.",
+                "Delikado ata crypto? Wala bang Maya?"
+            ],
+            gcrypto_solutions: [
+                "If wala ka Binance/Bybit, pwede naman sa GCash mismo. Check mo yung **GCrypto** feature.",
+                "Pwede ka mag send from GCash actually. Gamitin mo lang yung **GCrypto** sa dashboard.",
+                "Don't worry, real time din naman pasok nyan via GCash **GCrypto**.",
+                "Ganto, if wala ka crypto wallet, use GCash > GCrypto. Pwede mag send dun direct."
+            ],
+            friend_checks: [
+                "Wait ask ko lang friend ko kung G siya.",
+                "Hold on, confirm ko lang sa kasama ko.",
+                "Wait lang po, ask ko lang if tuloy kami.",
+                "Sec, forward ko lang sa friend ko details."
+            ],
+            proof_requests: [
+                "pic of the ticket with my name",
+                "video of the ticket with today's date",
+                "photo of the ticket next to a spoon (lol sorry weird request)",
+                "pic with your thumb showing",
+                "screen recording of the ticket email",
+                "pic with a peace sign next to it",
+                "video holding the ticket next to a light"
+            ],
+            deals: [
+                "Okay sige check ko GCrypto.",
+                "Sige I'll try that.",
+                "Okay I see it na.",
+                "Ah okay gets. Sige.",
+                "Alright I'll do that.",
+                "Found it. G."
+            ],
+            payment_sent: [
+                "Sent na po! Pa-check.",
+                "Done paying via GCrypto. Pa-check nalang wallet mo.",
+                "Sent! Pa-verify po if pumasok.",
+                "Done! Pa-confirm please.",
+                "Transferred na po.",
+                "Okay na, sent na sa address mo.",
+                "Done transaction via GCrypto."
+            ],
+            payment_confirmed: [
+                "Received! Thank you. See you on the 13th!",
+                "Got it. Marked as sold na. Thanks!",
+                "Payment received. I'll send the specific meetup loc on the day itself.",
+                "Received. Thanks for the smooth transaction!",
+                "Confirmed! See you sa {meetup}!"
+            ],
+            buyer_gratitude: [
+                "Thank you so much! 😭❤️",
+                "Yay thanks! See you!",
+                "Salamat po! Legit seller 💯",
+                "Thank you! Excited na ko!",
+                "Thanks for being legit! Hirap makahanap now."
+            ]
+        };
+
+        // --- HELPER FUNCTIONS ---
+
+        function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        function getTime(baseMinutes) {
+            const startHour = 17; // 5 PM
+            const hours = startHour + Math.floor(baseMinutes / 60);
+            const mins = baseMinutes % 60;
+            return `${hours > 12 ? hours - 12 : hours}:${mins.toString().padStart(2, '0')} PM`;
+        }
+        
+        // Simple relative time for the visual bubble (10m, 1h, etc)
+        function getShortTime(baseMinutes, currentMinutes) {
+            const diff = currentMinutes - baseMinutes;
+            if (diff < 60) return `${diff}m`;
+            return `${Math.floor(diff/60)}h`;
+        }
+
+        // --- REALISTIC STYLE & TYPO ENGINE ---
+        function applyPersonaStyle(text, style) {
+            let res = text;
+            if (style === 'lowercase_chill') {
+                res = res.toLowerCase().replace(/[\.,!]/g, '').replace('please', 'pls').replace('thanks', 'ty');
+            } else if (style === 'frantic') {
+                res = res.toUpperCase().replace('?', '??').replace('.', '!') + " PLS REPLY";
+            } else if (style === 'jeje') {
+                res = res.toLowerCase()
+                    .replace(/ako/g, 'aq').replace(/ko/g, 'q').replace(/po/g, 'p0')
+                    .replace(/kayo/g, 'kau').replace(/sige/g, 'cge')
+                    .replace(/siya/g, 'xa').replace(/hello/g, 'eow')
+                    .replace(/thanks/g, 'thx');
+            } else if (style === 'conyo') {
+                res = res.replace('available', 'avail').replace('really', 'sobrang')
+                    .replace(' wait ', ' wait lang ').replace('?', ' right?')
+                    .replace('!', '!! make tusok')
+                    .replace('can ', 'pwede like ')
+                    .replace('friend', 'frenny');
+            } else if (style === 'proper_polite') {
+                if (!res.endsWith('.') && !res.endsWith('?')) res += ".";
+                res = res.replace('Hi', 'Good day').replace('thanks', 'thank you so much');
+            }
+            if (style !== 'proper_polite' && Math.random() < 0.2) {
+                const typos = [['the', 'teh'], ['available', 'avail'], ['ticket', 'tix'], ['meetup', 'meet'], ['crypto', 'criypto']];
+                const t = pick(typos);
+                res = res.replace(t[0], t[1]);
+            }
+            return res;
+        }
+
+        function generateData() {
+            return {
+                ticket: pick(TICKETS),
+                buyerName: pick(BUYER_NAMES),
+                buyerHandle: `@${pick(BUYER_NAMES).toLowerCase()}_plays`,
+                persona: pick(PERSONAS),
+                sellerName: SELLER.name, 
+                sellerHandle: SELLER.handle
+            };
+        }
+
+        // --- SCENARIO PLOTTER ---
+        function getScenarioType() {
+            const r = Math.random();
+            if (r < 0.5) return 'lowballer';
+            if (r < 0.65) return 'seat_check';    
+            if (r < 0.8) return 'friend_check'; 
+            if (r < 0.9) return 'panic_buy';
+            return 'standard';                  
+        }
+
+        function generateChat(data) {
+            const msgs = [];
+            let t = 0; // Relative minutes from start of convo
+            const plot = getScenarioType();
+            
+            const fmt = (txt) => {
+                return txt.replace(/{ticket}/g, data.ticket.label)
+                          .replace(/{price}/g, data.ticket.price)
+                          .replace(/{meetup}/g, EVENT.venue);
+            };
+
+            const addMsg = (type, text, forcedDelay = null) => {
+                let formatted = fmt(text);
+                const typingDelay = Math.ceil(formatted.length / 20);
+                const delay = forcedDelay !== null ? forcedDelay : typingDelay;
+                t += delay;
+                let finalTxt = (type === 'rx') ? applyPersonaStyle(formatted, data.persona.style) : formatted;
+                msgs.push({ type, text: finalTxt, timeMins: t, fullTime: getTime(t) });
+            };
+
+            const addBurstMsg = (type, textArr, startDelay = 2) => {
+                t += startDelay;
+                textArr.forEach((txt, i) => {
+                    let formatted = fmt(txt);
+                    let finalTxt = (type === 'rx') ? applyPersonaStyle(formatted, data.persona.style) : formatted;
+                    if (i > 0) t += Math.random() > 0.5 ? 1 : 0; 
+                    msgs.push({ type, text: finalTxt, timeMins: t, fullTime: getTime(t) });
+                });
+            };
+
+            const addImg = (type, text, delay = 3) => {
+                t += delay;
+                msgs.push({ type, text, image: true, timeMins: t, fullTime: getTime(t) });
+            };
+
+            if (plot === 'panic_buy') {
+                addBurstMsg('rx', [`Hi! Mine ${data.ticket.label}!!`, "Avail pa??", "Get ko na pls"], 0);
+            } else {
+                addMsg('rx', pick(DIALOGUE.openers), 0);
+            }
+
+            addMsg('tx', pick(DIALOGUE.avail_confirms), 2);
+
+            if (plot === 'lowballer') {
+                addMsg('rx', pick(DIALOGUE.haggle_attempts), 3);
+                addMsg('tx', pick(DIALOGUE.haggle_rejects), 2);
+                addMsg('rx', "Ah ganun ba. Sige get ko na rin.", 4);
+            } 
+            else if (plot === 'seat_check') {
+                addMsg('rx', pick(DIALOGUE.seat_queries), 3);
+                addMsg('tx', pick(DIALOGUE.seat_replies), 5);
+                addMsg('rx', "Okay nice view. Sige.", 2);
+            }
+            else if (plot === 'friend_check') {
+                addMsg('rx', pick(DIALOGUE.friend_checks), 2);
+                t += 15; 
+                addBurstMsg('rx', ["Okay G daw kami.", "Available pa?"], 15);
+                addMsg('tx', "Yes, reserved for you pa din.", 1);
+            }
+
+            let reason = pick(DIALOGUE.reasons_dp);
+            let dp_ask = pick(DIALOGUE.reservation_asks).replace('{reason}', reason);
+            
+            if (plot === 'panic_buy') {
+                 addBurstMsg('rx', ["PWEDE 50% DP??", "TAKOT MAUNAHAN"], 2);
+            } else {
+                 addMsg('rx', dp_ask, 3);
+            }
+            
+            let excuse = pick(DIALOGUE.crypto_excuses);
+            addBurstMsg('tx', [`Ok sure, 50% DP to secure, then balance sa meetup.`, excuse], 2);
+
+            if (data.persona.id === 'skeptic') {
+                addBurstMsg('rx', ["Crypto?? That sounds sketchy.", "Do you have proof of life?"], 3);
+            } else {
+                addMsg('rx', pick(DIALOGUE.crypto_reactions), 2);
+            }
+
+            addMsg('tx', pick(DIALOGUE.gcrypto_solutions), 4);
+
+            let proof = pick(DIALOGUE.proof_requests);
+            let specific = proof.includes("name") ? `"${data.buyerName}"` : "the date";
+            
+            addMsg('rx', `${pick(DIALOGUE.deals)} Pero before sending, pa-send muna ${proof}? Pa-write ng ${specific}.`, 5);
+            addMsg('tx', "Sure, wait lang. Sulat ko lang.", 3);
+            addImg('tx', "Here oh.", 4);
+
+            const addr = "TXJ8" + Math.random().toString(36).substring(2, 15) + "xxxxx";
+            
+            if (data.persona.id === 'skeptic') {
+                addMsg('rx', "Okay looks legit. Send address.", 3);
+            } else {
+                addMsg('rx', "Okay thank you! Kita ko na. Send your TRC20 address?", 2);
+            }
+            
+            addMsg('tx', `Here: ${addr}`, 1);
+            
+            const closing = [
+                "Message mo ko pag okay na para ma-check ko agad.",
+                "Let me know pag sent na para ma-verify ko sa end ko.",
+                "Update mo ko pag done na, check ko if pumasok.",
+                "Pa-sabi nalang pag transfer na para ma-refresh ko wallet."
+            ];
+            addMsg('tx', pick(closing), 1);
+
+            addMsg('rx', pick(DIALOGUE.payment_sent), 6); 
+            addMsg('tx', pick(DIALOGUE.payment_confirmed), 2);
+            addMsg('rx', pick(DIALOGUE.buyer_gratitude), 1);
+
+            return msgs;
+        }
+
+        // UPDATED RENDER FUNCTION FOR PIXEL PERFECTION
+        function renderConversation(msgs, data) {
+            const container = document.getElementById('chat-container');
+            container.innerHTML = ''; 
+
+            const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${data.buyerName}&backgroundColor=ffdfbf`;
+
+            // 1. Profile Hero Section (Center Top)
+            const heroDiv = document.createElement('div');
+            heroDiv.className = "flex flex-col items-center pt-8 pb-8 border-b border-[var(--border-color)] mb-4 transition-colors duration-200";
+            heroDiv.innerHTML = `
+                <div class="relative mb-2">
+                    <img src="${avatarUrl}" class="w-16 h-16 rounded-full object-cover bg-gray-800">
+                </div>
+                <h2 class="text-[var(--text-primary)] font-bold text-lg leading-tight">${data.buyerName}</h2>
+                <div class="text-[var(--text-secondary)] text-[15px] mb-2">${data.buyerHandle}</div>
+                <div class="text-[var(--text-secondary)] text-[15px] flex items-center gap-1">
+                    <i class="far fa-calendar-alt"></i>
+                    <span>Joined April 2024</span>
+                </div>
+            `;
+            container.appendChild(heroDiv);
+
+            // 2. Date Separators Logic (Simulated)
+            const splitIndex = Math.max(0, msgs.length - 4);
+            
+            const yesterdayDiv = document.createElement('div');
+            yesterdayDiv.className = "flex justify-center my-4";
+            yesterdayDiv.innerHTML = `<span class="text-[var(--text-secondary)] text-[13px] font-bold">Yesterday</span>`;
+            container.appendChild(yesterdayDiv);
+
+            msgs.forEach((msg, index) => {
+                if (index === splitIndex) {
+                    const todayDiv = document.createElement('div');
+                    todayDiv.className = "flex justify-center my-4";
+                    todayDiv.innerHTML = `<span class="text-[var(--text-secondary)] text-[13px] font-bold">Today</span>`;
+                    container.appendChild(todayDiv);
+                }
+
+                const wrapper = document.createElement('div');
+                const isSender = msg.type === 'tx'; 
+                const align = isSender ? 'items-end' : 'items-start';
+                wrapper.className = `flex flex-col gap-[2px] ${align} mb-1`;
+                
+                let contentHTML = '';
+                
+                // Colors & Shape - Use Variables for RX, Hardcoded Blue for TX (X Standard)
+                const bgClass = isSender ? 'bg-[#1d9bf0]' : 'bg-[var(--rx-bubble)]';
+                const textClass = isSender ? 'text-white' : 'text-[var(--rx-text)]';
+                const shapeClass = isSender 
+                    ? 'rounded-[24px]' 
+                    : 'rounded-[24px]';
+                
+                const timeStr = isSender ? `${Math.floor(Math.random() * 59) + 1}m` : msg.fullTime;
+                
+                if (msg.image) {
+                    const imgSrc = customTicketImage ? customTicketImage : null;
+                    // Image Bubble structure
+                    contentHTML = `
+                        <div class="relative overflow-hidden rounded-[18px] border border-[var(--border-color)] mb-1">
+                             ${imgSrc 
+                                ? `<img src="${imgSrc}" class="max-w-[260px] max-h-[300px] object-cover block">`
+                                : `<div class="bg-[var(--img-placeholder-bg)] w-[260px] h-[180px] flex items-center justify-center">
+                                     <div class="text-center p-4">
+                                       <i class="fas fa-ticket-alt text-4xl text-[var(--text-secondary)] mb-2"></i>
+                                       <p class="text-[11px] text-[var(--text-secondary)]">Proof Image</p>
+                                     </div>
+                                   </div>`
+                             }
+                             <!-- Timestamp on Image -->
+                             <div class="absolute bottom-2 right-2 bg-black/60 px-1.5 py-0.5 rounded text-[10px] text-white flex items-center gap-1 backdrop-blur-sm">
+                                ${timeStr} ${isSender ? '<i class="fas fa-check-circle text-[10px]"></i>' : ''}
+                             </div>
+                        </div>
+                    `;
+                    // Text accompanying image (if any)
+                    if(msg.text && msg.text !== "Here oh.") {
+                         contentHTML += `
+                            <div class="message-bubble ${bgClass} ${textClass} px-4 py-2.5 ${shapeClass} text-[15px] max-w-[85%] inline-block transition-colors duration-200">
+                                <span class="align-middle">${msg.text}</span>
+                                <span class="inline-block text-[11px] ${isSender ? 'text-blue-100' : 'text-gray-400'} ml-2 align-bottom mb-0.5">
+                                    ${timeStr} ${isSender ? '<i class="fas fa-check-circle text-[10px]"></i>' : ''}
+                                </span>
+                            </div>
+                        `;
+                    }
+                } else {
+                    let text = msg.text.replace(/\n/g, '<br>');
+                    if(text.includes('TXJ8')) {
+                        text = text.replace(/(TXJ8[a-zA-Z0-9]+)/g, '<span class="font-mono text-sm bg-black/20 p-1 rounded select-all cursor-pointer">$1</span>');
+                    }
+                    
+                    contentHTML = `
+                        <div class="message-bubble ${bgClass} ${textClass} px-4 py-2.5 ${shapeClass} text-[15px] inline-block transition-colors duration-200">
+                            <span class="align-middle">${text}</span>
+                            <span class="inline-block text-[11px] ${isSender ? 'text-blue-100' : 'text-gray-400'} ml-2 align-bottom mb-0.5 whitespace-nowrap">
+                                ${timeStr} ${isSender ? '<i class="fas fa-check-circle text-[10px] ml-0.5"></i>' : ''}
+                            </span>
+                        </div>
+                    `;
+                }
+                
+                wrapper.innerHTML = contentHTML;
+                container.appendChild(wrapper);
+            });
+
+            const spacer = document.createElement('div');
+            spacer.className = "h-4";
+            container.appendChild(spacer);
+            setTimeout(() => { container.scrollTop = container.scrollHeight; }, 100);
+        }
+
+        function updateHeader(data) {
+            document.getElementById('header-name').innerText = data.buyerName;
+            // Avatar update
+            document.getElementById('header-avatar').src = `https://api.dicebear.com/9.x/avataaars/svg?seed=${data.buyerName}&backgroundColor=ffdfbf`;
+            document.title = `DM: ${data.buyerName}`;
+        }
+
+        function generateNewConversation() {
+            const data = generateData();
+            const msgs = generateChat(data);
+            updateHeader(data);
+            renderConversation(msgs, data);
+        }
+
+        initUI();
+    </script>
+</body>
+</html>
