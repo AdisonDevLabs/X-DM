@@ -51,8 +51,9 @@
             --rx-bubble: #2f3336;
             --rx-text: #e7e9ea;
             --input-bg: #202327;
-            --plus-btn-bg: #eff3f4;
-            --plus-btn-text: #000000;
+            --plus-btn-bg: transparent;
+            --plus-btn-border: #e7e9ea;
+            --plus-btn-text: #e7e9ea;
             --icon-color: #eff3f4;
             --placeholder-color: #71767b;
             --img-placeholder-bg: #16181c;
@@ -67,8 +68,9 @@
             --rx-bubble: #eff3f4; /* Light gray bubble */
             --rx-text: #0f1419;
             --input-bg: #eff3f4;
-            --plus-btn-bg: #1d9bf0; /* Blue plus button in light mode usually, or keep black? Let's go blue for brand */
-            --plus-btn-text: #ffffff;
+            --plus-btn-bg: transparent; /* Blue plus button in light mode usually, or keep black? Let's go blue for brand */
+            --plus-btn-border: #0f1419;
+            --plus-btn-text: #0f1419;
             --icon-color: #0f1419;
             --placeholder-color: #536471;
             --img-placeholder-bg: #f7f9f9;
@@ -237,14 +239,14 @@
         </div>
 
         <!-- Input Area -->
-        <div class="bg-[var(--bg-primary)] px-3 py-3 flex items-center gap-3 min-h-[50px] transition-colors duration-200 relative z-20 safe-area-bottom">
+        <div class="bg-[var(--bg-primary)] px-3 py-3 flex items-center gap-3 min-h-[40px] transition-colors duration-200 relative z-20 safe-area-bottom">
             <!-- Plus Circle Button with Action Menu Trigger -->
-            <button onclick="toggleMenu()" class="w-[34px] h-[34px] bg-[var(--plus-btn-bg)] text-[var(--plus-btn-text)] rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-200 hover:opacity-90 active:scale-95" title="More Options">
+            <button onclick="toggleMenu()" class="w-[25px] h-[25px] bg-[var(--plus-btn-bg)] border-[3px] border-[var(--plus-btn-border)] text-[var(--plus-btn-text)] rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-200 hover:opacity-90 active:scale-95" title="More Options">
                 <i class="fas fa-plus text-[16px]"></i>
             </button>
             
             <!-- Input Pill -->
-            <div class="flex-1 bg-[var(--input-bg)] rounded-[24px] h-[44px] flex items-center px-4 gap-2 border border-transparent focus-within:border-[#1d9bf0] transition-colors duration-200">
+            <div class="flex-1 bg-[var(--input-bg)] rounded-[24px] h-[40px] flex items-center px-4 gap-2 border border-transparent focus-within:border-[#1d9bf0] transition-colors duration-200">
                 <input type="text" placeholder="Unencrypted Message" class="bg-transparent text-[var(--text-primary)] w-full outline-none text-[16px]">
             </div>
         </div>
@@ -442,6 +444,38 @@
             "Xander", "Bella", "Miguel", "Sofia", "Luis", "Chloe", "Marco", "Hannah"
         ];
 
+        // ADD YOUR IMAGES HERE: Map each name to a file path (e.g., "Aria": "images/aria.jpg") more options
+        const PROFILE_PICS = {
+            "Aria": "https://imgs.search.brave.com/ouTwRPMx83A1xH2mNd-qlqWa2NahREWUInuvhjrPeTs/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzFmL2Qy/L2Y1LzFmZDJmNTUy/ZmQyNjNiOGJhNDBh/ODBmNWM5MDk3ZWUx/LmpwZw",
+            "Josh": "https://imgs.search.brave.com/47YlD7_OgtAmkzDLXcVzu5ylb1BAmkz8VP_LmxBPLsk/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wMDIv/MDIyLzMxOC9zbWFs/bC9zaWxob3VldHRl/LW9mLWEtcGVyc29u/LWluLXByYXllci1p/bi13YXRlci1mcmVl/LXBob3RvLmpwZw",
+            "Mika": "https://imgs.search.brave.com/wKd0yEEA0rtkiA4uPhJpt9AlZi1_wvMOhDE6fK3Zsm4/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4u/cGl4YWJheS5jb20v/cGhvdG8vMjAxNy8w/OC8yNi8yMS80MC9w/ZW9wbGUtMjY4NDQy/MV8xMjgwLmpwZw",
+            "Renz": "https://imgs.search.brave.com/nYsCVkJHSEWr2at4lXtts9y2wdHorktqqtLgJ6P9Sb8/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9hc3Nl/dHMudGVlbnZvZ3Vl/LmNvbS9waG90b3Mv/NWIwZWE1NzI4MGQy/YTA3N2Y4OGIzZGIw/L21hc3Rlci93XzEw/MjQsY19saW1pdC8x/MS1Sb3ljZS5qcGc",
+            "Gab": "https://imgs.search.brave.com/mM2e-CBwJ2jY4xDCh_2t3_nMlWdoP6yjZq_uAAUGKPc/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudW5zcGxhc2gu/Y29tL3Bob3RvLTE1/MjI1NTYxODk2Mzkt/YjE1MGVkOWM0MzMw/P2ZtPWpwZyZxPTYw/Jnc9MzAwMCZpeGxp/Yj1yYi00LjEuMCZp/eGlkPU0zd3hNakEz/ZkRCOE1IeHpaV0Z5/WTJoOE1UbDhmSEJs/Y25OdmJtRjhaVzU4/TUh4OE1IeDhmREE9",
+            "Bea": "https://imgs.search.brave.com/jd1Vu0uAzdC_hd12driyWDZupnt23ktkzQbaPeTmpi0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTQ1/MDI2ODU1OC9waG90/by9zdW1tZXItc2Vs/ZmllLmpwZz9zPTYx/Mng2MTImdz0wJms9/MjAmYz1JaXZHUUlY/VjdwQ3VfdHIxMEkw/a2FEb3VVdElpX3BL/ek9ycUJfTkFHb0NB/PQ",
+            "Ken": "", 
+            "Pat": "https://imgs.search.brave.com/ZU1EYbHkdtm01z3ZA7dR8K8zuf0nkFsohdJWPPnloc0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudW5zcGxhc2gu/Y29tL3Bob3RvLTE2/NDA5NDE1MTg0ODct/MDMwNTM3ODM0YTRm/P2ZtPWpwZyZxPTYw/Jnc9MzAwMCZpeGxp/Yj1yYi00LjEuMCZp/eGlkPU0zd3hNakEz/ZkRCOE1IeHpaV0Z5/WTJoOE1URjhmSEps/WVd3bE1qQndaWEp6/YjI1OFpXNThNSHg4/TUh4OGZEQT0",
+            "Ysa": "https://imgs.search.brave.com/hpJxDeRDMgkckY7FIOxNE1i62tnCyqRo6mtVVkbgEdU/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNTQv/MDA3LzE5OS9zbWFs/bC9hc2lhbi15b3Vu/Zy1tYW4td2l0aC1i/YWNrcGFjay1waG90/by5qcGc",
+            "Kian": "https://imgs.search.brave.com/EDNY-08HxZojhcAnyltUkcZ6keyOyx26l8G3onIzBOc/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNTQv/MDA3LzEzMC9zbWFs/bC9hc2lhbi1tYWxl/LXN0dWRlbnQtd2l0/aC1iYWNrcGFjay1z/bWlsaW5nLXBob3Rv/LmpwZw",
+            "Louie": "https://imgs.search.brave.com/IZ-hDO_VqpIMfnySJv2ymnCm4halOt124iSvTY-0xhE/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4u/cGl4YWJheS5jb20v/cGhvdG8vMjAyMS8w/My8wNC8xMC8xMS9h/c2lhbi02MDY3NDcz/XzY0MC5qcGc",
+            "Sam": "https://imgs.search.brave.com/5PBNOHqdQbHFs_veCyLWUEtiphiXzMkO_cq7FgoT4Yk/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdDMu/ZGVwb3NpdHBob3Rv/cy5jb20vNjQ2Mjg5/OC8zMTk2MS9pLzQ1/MC9kZXBvc2l0cGhv/dG9zXzMxOTYxNTY0/OC1zdG9jay1waG90/by1hc2lhbi1tYW4t/bG9va2luZy1oaXMt/aGFpci5qcGc",
+            "Alex": "https://imgs.search.brave.com/8-B8cf7bjPV4iLzotqD9BpAaMjRAngXt3EqKKoa1_64/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wNTQv/ODgwLzE0Mi9zbWFs/bC9pbnRlbGxpZ2Vu/dC15b3VuZy1hc2lh/bi1tYW4taW4tY2Fz/dWFsLWNsb3RoaW5n/LXN0YW5kaW5nLW91/dGRvb3JzLWZyZWUt/cGhvdG8uanBlZw",
+            "Cheska": "", 
+            "Jolo": "",
+            "Ria": "https://imgs.search.brave.com/pcZ_89v3neVFkYn8RLkugh00VWdAPP_cu7bCkXMwbrc/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTc4/Mzk1NjY4Ny9waG90/by9wb3J0cmFpdC1v/Zi15b3VuZy1hc2lh/bi1idXNpbmVzcy13/b21hbi1pbi1vdXRk/b29ycy5qcGc_cz02/MTJ4NjEyJnc9MCZr/PTIwJmM9cG5WaDZ1/N3FMT2dPQnlpOEtV/TEZjVHFQQmlZalZw/a01JQ1cyQ3VyRzEy/WT0",
+            "Nico": "https://imgs.search.brave.com/akIljOMR-DTl1Q65h6qGxQJ_yDFr7z7pkV5ICmorz-0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTY2/MjE2MTgzOS9waG90/by9hdWRpZW5jZS1t/ZW1iZXJzLWVudGVy/LXRoZS1jb25jZXJ0/LWhhbGwtYW5kLXJ1/bi10b3dhcmQtdGhl/LXN0YWdlLXdpdGgt/Y2hlZXJzLmpwZz9z/PTYxMng2MTImdz0w/Jms9MjAmYz1CZ0RM/T1lkQlFBd3lfbXAz/OXdkTjF2WmU1UUZF/X3YwVjJFMFI4cFpI/ZjM0PQ",
+            "Pam": "https://imgs.search.brave.com/IyEVl0MmE7uR5MkU79GQb8EfVgryfUuDC7oNwQAQQ0w/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzk2Lzc2/L2Y2Lzk2NzZmNmY1/Y2RlNWNmNWI4NTkx/MTQ1ZWI2NTBmMjgz/LmpwZw",
+            "Gio": "https://imgs.search.brave.com/IEvdsfcXA8uOEC7EadsOG7e77K-CrHiD9gui04jHtLk/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTY2/MjE2MjM1NS9waG90/by9hdWRpZW5jZS1h/dC1jb25jZXJ0LWhh/bGwuanBnP3M9NjEy/eDYxMiZ3PTAmaz0y/MCZjPVFJOW04OEh4/aU8tckRhMDMxeHF3/MjhmXzZaZnJiYlRG/dGp6MWF3LTZtUnM9",
+            "Ella": "https://imgs.search.brave.com/U8SJRjqaXtRWlSWaV24SG41FRAyH_vOwueqyRiGEHKE/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTY2/NDU0NTYwNi9waG90/by9tYXR1cmUtamFw/YW5lc2Utdm9jYWwt/d29tYW4tcGVyZm9y/bWluZy1jb25jZXJ0/LWF0LWxpdmUtbXVz/aWMtY2x1Yi5qcGc_/cz02MTJ4NjEyJnc9/MCZrPTIwJmM9MVFq/c3gwZmtpZjVCY0Iz/dmtCRFZMTlpudkRS/S2hiRENXamw4ZzB6/Ym1oRT0",
+            "Xander": "https://imgs.search.brave.com/BdVVBskDgxX-ZEEGXMlDOYefyipFQ8J83O7L03PZN0g/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTMy/ODE5MDI0MS9waG90/by9hc2lhbi1jb3Vw/bGUtY2VsZWJyYXRp/bmctYXQtcGFydHku/anBnP3M9NjEyeDYx/MiZ3PTAmaz0yMCZj/PWE3SksyTGdleExi/ek4waDgwMzIzeEhm/WUJ2Z05hWndSSDdz/dzZrcDQta2M9", 
+            "Bella": "https://imgs.search.brave.com/ZTjU-39IjB_GZ8tzydD3HSryvPyi5lrjz68TKCFSTIE/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTQx/MTM4NjgzMi9waG90/by9tdXNpYy1mZXN0/aXZhbC5qcGc_cz02/MTJ4NjEyJnc9MCZr/PTIwJmM9bzdNMGg5/NG5iRTFTa0R3NnNK/OEViNVhhN0VnRVFB/LWpwZ1hZT0E5MjYy/RT0",
+            "Miguel": "https://imgs.search.brave.com/er4SeQo-EGVVy7WThd4OIkBJT2M9CozFiEa75KAQqEg/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTI4/MDc2MjU2Mi9waG90/by9wb3J0cmFpdC1v/Zi1hc2lhbi1zdHJl/ZXQtbXVzaWNpYW4t/cGVyZm9ybWluZy1v/bi1zdHJlZXQtYXQt/bmlnaHQuanBnP3M9/NjEyeDYxMiZ3PTAm/az0yMCZjPTRldWFs/dEJnRDhiMXh1SDJR/aTBTU21MZTNpd2Js/b3hLeERlSlRfVHhy/TzA9",
+            "Sofia": "https://imgs.search.brave.com/Tbwi_oGS8c09iB0C6JZwhv0Xy90ONqmvCjtjyMJJ62I/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvOTc5/NjcwMzc0L3Bob3Rv/L2EtamFwYW5lc2Ut/d29tYW4tZ3VpdGFy/aXN0LXdoby1zaG93/cy1hLXNtaWxlLXdo/aWxlLXByYWN0aWNp/bmcuanBnP3M9NjEy/eDYxMiZ3PTAmaz0y/MCZjPW0zblllYTJH/NlU5SVRkM0ZxOWpN/VHhXS2RKVUVGUWNZ/YldMS2tsMGlxNDQ9",
+            "Luis": "https://imgs.search.brave.com/-Iw-IFNM7_xWDab52vZSHmZjIbPo1L2ty1GRQ-Uu8gY/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMjE1/NzIyMjMzNy9waG90/by9oYW5kcy1tYWtp/bmctcm9jay1zaWdu/LWF0LW11c2ljLWZl/c3RpdmFsLmpwZz9z/PTYxMng2MTImdz0w/Jms9MjAmYz1pMU5a/UnMxWXloOWFhY2Rk/ZGZGREtPc055ZnlL/NWN1QXF6dUJHVC1L/OFU0PQ",
+            "Chloe": "https://imgs.search.brave.com/HNjTWJAHnPMGMTWzNkDwetk9n1wgDQeVbNsQJAgPcSc/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTQ5/OTIxNDUwMC9waG90/by9wb3J0cmFpdC15/b3VuZy1hc2lhbi1j/aGluZXNlLXdvbWFu/LW9uLXBlZGVzdHJp/YW4td2Fsa3dheS1s/b29raW5nLWF0LWNh/bWVyYS5qcGc_cz02/MTJ4NjEyJnc9MCZr/PTIwJmM9SWlDeFV0/d1R1RU0tcUxzWUZL/clZCU014RUdDTjFq/YUY2aFpaOVV3d3Y4/TT0",
+            "Marco": "https://imgs.search.brave.com/bTBDg1Vi-1F5vDlGpJfswrTCTXF9gjV9p-mcbc7qOsI/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvOTEz/ODUwNTg2L3Bob3Rv/L3N0cmVldC1wZXJm/b3JtaW5nLmpwZz9z/PTYxMng2MTImdz0w/Jms9MjAmYz12S0g5/Y0d3a2EyQW1zUC1i/RkxLSzFKNVVJUkV3/bk5tMVFEd2ZELXc4/NnNVPQ",
+            "Hannah": "https://imgs.search.brave.com/G3U3KA2KoVdo7_JnLt2W48lfGp5Nwhpj9UzqqrM7Ksc/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTU1/NTM5MDQ0MC9waG90/by95b3VuZy1hc2lh/bi1jaGluZXNlLXNv/bG8tZmVtYWxlLXNp/bmdlci1zaW5naW5n/LXBlcmZvcm1hbmNl/LW9uLXN0YWdlLmpw/Zz9zPTYxMng2MTIm/dz0wJms9MjAmYz1j/NjV6ZHQ4N2VmNzF1/QnpoVk13Q3NNbmJR/ektJbWhoV0ZfUWxJ/bXRyWW40PQ"
+        };
+
         const PERSONAS = [
             { id: 'polite', label: 'The Polite Student', style: 'proper_polite' },
             { id: 'conyo', label: 'The Conyo Kid', style: 'conyo' },
@@ -605,20 +639,38 @@
 
         function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-        function getTime(baseMinutes) {
-            const startHour = 17; // 5 PM
-            const hours = startHour + Math.floor(baseMinutes / 60);
-            const mins = baseMinutes % 60;
-            return `${hours > 12 ? hours - 12 : hours}:${mins.toString().padStart(2, '0')} PM`;
-        }
-        
-        // Simple relative time for the visual bubble (10m, 1h, etc)
-        function getShortTime(baseMinutes, currentMinutes) {
-            const diff = currentMinutes - baseMinutes;
-            if (diff < 60) return `${diff}m`;
-            return `${Math.floor(diff/60)}h`;
+        // NEW: Formatting Functions for Realistic Time
+        function formatTime(date) {
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            return `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
         }
 
+        function getDayHeader(date) {
+            const now = new Date();
+            const yesterday = new Date(now);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            // Check if same day
+            if (date.toDateString() === now.toDateString()) return "Today";
+            if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
+            
+            // Default formatting
+            return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        }
+
+        function getRandomJoinedDate() {
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const startYear = 2015;
+            const endYear = 2024;
+            const year = Math.floor(Math.random() * (endYear - startYear + 1)) + startYear;
+            const month = months[Math.floor(Math.random() * months.length)];
+            return `Joined ${month} ${year}`;
+        }
+        
         // --- REALISTIC STYLE & TYPO ENGINE ---
         function applyPersonaStyle(text, style) {
             let res = text;
@@ -651,13 +703,26 @@
         }
 
         function generateData() {
+            const bName = pick(BUYER_NAMES);
+            
+            // Logic for Custom vs Random Avatar
+            let avatarUrl;
+            if (PROFILE_PICS[bName] && PROFILE_PICS[bName].trim() !== "") {
+                avatarUrl = PROFILE_PICS[bName];
+            } else {
+                const avatarBg = pick(['b6e3f4', 'c0aede', 'd1d4f9', 'ffd5dc', 'ffdfbf', 'ccd5ae', 'e9edc9', 'fae1dd', 'd6e2e9']);
+                avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${bName}-${Math.random()}&backgroundColor=${avatarBg}`;
+            }
+
             return {
                 ticket: pick(TICKETS),
-                buyerName: pick(BUYER_NAMES),
+                buyerName: bName,
                 buyerHandle: `@${pick(BUYER_NAMES).toLowerCase()}_plays`,
                 persona: pick(PERSONAS),
                 sellerName: SELLER.name, 
-                sellerHandle: SELLER.handle
+                sellerHandle: SELLER.handle,
+                joinedDate: getRandomJoinedDate(),
+                avatarUrl: avatarUrl
             };
         }
 
@@ -688,7 +753,8 @@
                 const delay = forcedDelay !== null ? forcedDelay : typingDelay;
                 t += delay;
                 let finalTxt = (type === 'rx') ? applyPersonaStyle(formatted, data.persona.style) : formatted;
-                msgs.push({ type, text: finalTxt, timeMins: t, fullTime: getTime(t) });
+                // Note: fullTime is calculated later to be realistic
+                msgs.push({ type, text: finalTxt, timeMins: t });
             };
 
             const addBurstMsg = (type, textArr, startDelay = 2) => {
@@ -697,13 +763,13 @@
                     let formatted = fmt(txt);
                     let finalTxt = (type === 'rx') ? applyPersonaStyle(formatted, data.persona.style) : formatted;
                     if (i > 0) t += Math.random() > 0.5 ? 1 : 0; 
-                    msgs.push({ type, text: finalTxt, timeMins: t, fullTime: getTime(t) });
+                    msgs.push({ type, text: finalTxt, timeMins: t });
                 });
             };
 
             const addImg = (type, text, delay = 3) => {
                 t += delay;
-                msgs.push({ type, text, image: true, timeMins: t, fullTime: getTime(t) });
+                msgs.push({ type, text, image: true, timeMins: t });
             };
 
             if (plot === 'panic_buy') {
@@ -788,7 +854,7 @@
             const container = document.getElementById('chat-container');
             container.innerHTML = ''; 
 
-            const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${data.buyerName}&backgroundColor=ffdfbf`;
+            const avatarUrl = data.avatarUrl;
 
             // 1. Profile Hero Section (Center Top)
             const heroDiv = document.createElement('div');
@@ -801,25 +867,22 @@
                 <div class="text-[var(--text-secondary)] text-[15px] mb-4">${data.buyerHandle}</div>
                 <div class="text-[var(--text-secondary)] text-[15px] flex items-center gap-1">
                     <i class="far fa-calendar-alt"></i>
-                    <span>Joined April 2024</span>
+                    <span>${data.joinedDate}</span>
                 </div>
             `;
             container.appendChild(heroDiv);
 
-            // 2. Date Separators Logic (Simulated)
-            const splitIndex = Math.max(0, msgs.length - 4);
-            
-            const yesterdayDiv = document.createElement('div');
-            yesterdayDiv.className = "flex justify-center my-4";
-            yesterdayDiv.innerHTML = `<span class="text-[var(--text-secondary)] text-[13px] font-bold">Yesterday</span>`;
-            container.appendChild(yesterdayDiv);
+            // 2. Realistic Day/Date Separation Logic
+            let lastDayHeader = "";
 
             msgs.forEach((msg, index) => {
-                if (index === splitIndex) {
-                    const todayDiv = document.createElement('div');
-                    todayDiv.className = "flex justify-center my-4";
-                    todayDiv.innerHTML = `<span class="text-[var(--text-secondary)] text-[13px] font-bold">Today</span>`;
-                    container.appendChild(todayDiv);
+                // Check if we need a new day header
+                if (msg.dayHeader !== lastDayHeader) {
+                    const dateDiv = document.createElement('div');
+                    dateDiv.className = "flex justify-center my-4";
+                    dateDiv.innerHTML = `<span class="text-[var(--text-secondary)] text-[13px] font-bold">${msg.dayHeader}</span>`;
+                    container.appendChild(dateDiv);
+                    lastDayHeader = msg.dayHeader;
                 }
 
                 const wrapper = document.createElement('div');
@@ -836,7 +899,8 @@
                     ? 'rounded-[24px]' 
                     : 'rounded-[24px]';
                 
-                const timeStr = isSender ? `${Math.floor(Math.random() * 59) + 1}m` : msg.fullTime;
+                // Use the strictly formatted AM/PM string for realistic timing
+                const timeStr = msg.fullTime;
                 
                 if (msg.image) {
                     const imgSrc = customTicketImage ? customTicketImage : null;
@@ -853,9 +917,9 @@
                                    </div>`
                              }
                              <!-- Timestamp on Image -->
-                             <div class="absolute bottom-2 right-2 bg-black/60 px-1.5 py-0.5 rounded text-[10px] text-white flex items-center gap-1 backdrop-blur-sm">
-                                ${timeStr} ${isSender ? '<i class="fas fa-check-circle text-[10px]"></i>' : ''}
-                             </div>
+                             <div class="absolute bottom-1.5 right-1.5 bg-black/60 px-1.5 py-0.5 rounded-md text-[10px] text-white flex items-center gap-1 backdrop-blur-sm shadow-sm">
+                                ${timeStr} ${isSender ? '<i class="far fa-check-circle text-[10px]"></i>' : ''}
+                             </8iv>
                         </div>
                     `;
                     // Text accompanying image (if any)
@@ -863,9 +927,9 @@
                          contentHTML += `
                             <div class="message-bubble ${bgClass} ${textClass} px-2 py-2.5 ${shapeClass} text-[15px] max-w-[85%] inline-block transition-colors duration-200 mb-4">
                                 <span class="align-middle">${msg.text}</span>
-                                <span class="inline-block text-[11px] ${isSender ? 'text-blue-100' : 'text-gray-400'} ml-2 align-bottom mb-0.5">
-                                    ${timeStr} ${isSender ? '<i class="fas fa-check-circle text-[10px]"></i>' : ''}
-                                </span>
+                                <span class="float-right text-[11px] ${isSender ? 'text-blue-100' : 'text-gray-400'} ml-3 mt-1.5 align-bottom h-[14px] flex items-center">
+                                    ${timeStr} ${isSender ? '<i class="far fa-check-circle text-[10px]"></i>' : ''}
+                                </s8an>
                             </div>
                         `;
                     }
@@ -878,8 +942,8 @@
                     contentHTML = `
                         <div class="message-bubble ${bgClass} ${textClass} px-4 py-2.5 ${shapeClass} text-[15px] inline-block transition-colors duration-200 mb-4">
                             <span class="align-middle">${text}</span>
-                            <span class="inline-block text-[11px] ${isSender ? 'text-blue-100' : 'text-gray-400'} ml-2 align-bottom mb-4.5 whitespace-nowrap">
-                                ${timeStr} ${isSender ? '<i class="fas fa-check-circle text-[10px] ml-0.5"></i>' : ''}
+                            <span class="float-right text-[11px] ${isSender ? 'text-blue-100' : 'text-gray-400'} ml-3 mt-1.5 align-bottom h-[14px] flex items-center">
+                                ${timeStr} ${isSender ? '<i class="far fa-check-circle text-[10px] ml-0.5"></i>' : ''}
                             </span>
                         </div>
                     `;
@@ -898,13 +962,29 @@
         function updateHeader(data) {
             document.getElementById('header-name').innerText = data.buyerName;
             // Avatar update
-            document.getElementById('header-avatar').src = `https://api.dicebear.com/9.x/avataaars/svg?seed=${data.buyerName}&backgroundColor=ffdfbf`;
+            document.getElementById('header-avatar').src = data.avatarUrl;
             document.title = `DM: ${data.buyerName}`;
         }
 
         function generateNewConversation() {
             const data = generateData();
-            const msgs = generateChat(data);
+            const rawMsgs = generateChat(data);
+            
+            // Post-process timestamps for realism
+            // Anchor the end of the conversation to NOW
+            const now = new Date();
+            const totalDurationMins = rawMsgs[rawMsgs.length - 1].timeMins;
+            const startTimeVal = now.getTime() - (totalDurationMins * 60 * 1000);
+
+            const msgs = rawMsgs.map(msg => {
+                const msgDate = new Date(startTimeVal + (msg.timeMins * 60 * 1000));
+                return {
+                    ...msg,
+                    fullTime: formatTime(msgDate), // Correct AM/PM format
+                    dayHeader: getDayHeader(msgDate) // Correct Day/Date header
+                };
+            });
+
             updateHeader(data);
             renderConversation(msgs, data);
         }
